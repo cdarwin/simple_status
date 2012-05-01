@@ -3,30 +3,53 @@ package main
 import (
   "encoding/json"
   "fmt"
+  "io"
   "net/http"
   "os"
   "time"
 )
 
 type Message struct {
-  Hostname string
-  Cwd string
-  PageSize int
+  Host string
+  Load string
   Time string
 }
 
-func setMessage() []byte {
-  name, _ := os.Hostname()
-  cwd, _ := os.Getwd()
-  page := os.Getpagesize()
-  t := time.Now().Format("20060102150405")
-  m := Message{name, cwd, page, t}
-  b, _ := json.Marshal(m)
+func host() string {
+  host, err := os.Hostname()
+  if err != nil {
+    return fmt.Sprint(err)
+  }
+  return host
+}
+
+func load() string {
+  f, err := os.Open("/proc/loadavg")
+  if err != nil {
+    return fmt.Sprint(err)
+  }
+  var r io.Reader
+  r = f
+  var a, b, c, d, e string
+  fmt.Fscanf(r, "%s %s %s %s %s", &a, &b, &c, &d, &e)
+  return fmt.Sprintf("%s %s %s %s %s", a, b, c, d, e)
+}
+
+func now() string {
+  return time.Now().Format("2006 01/02 1504-05")
+}
+
+func message() []byte {
+  m := Message{host(), load(), now()}
+  b, err := json.Marshal(m)
+  if err != nil {
+    return nil
+  }
   return b
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
-  fmt.Fprintf(w, "%s", setMessage())
+  fmt.Fprintf(w, "%s", message())
 }
 
 func main() {
