@@ -3,7 +3,7 @@ package main
 import (
   "encoding/json"
   "fmt"
-  "io"
+  "io/ioutil"
   "net/http"
   "os"
   "time"
@@ -24,15 +24,11 @@ func host() string {
 }
 
 func load() string {
-  f, err := os.Open("/proc/loadavg")
+  b, err := ioutil.ReadFile("/proc/loadavg")
   if err != nil {
     return fmt.Sprint(err)
   }
-  var r io.Reader
-  r = f
-  var a, b, c, d, e string
-  fmt.Fscanf(r, "%s %s %s %s %s", &a, &b, &c, &d, &e)
-  return fmt.Sprintf("%s %s %s %s %s", a, b, c, d, e)
+  return fmt.Sprintf("%s", b[:len(b)-1])
 }
 
 func now() string {
