@@ -1,12 +1,14 @@
 package main
 
 import (
+  "bufio"
+  "bytes"
   "encoding/json"
   "fmt"
+  "io"
   "io/ioutil"
   "net/http"
   "os"
-  "os/exec"
   "time"
 )
 
@@ -34,19 +36,31 @@ func load() string {
 }
 
 func ram() string {
-  free := exec.Command("free", "-m")
-  grep := exec.Command("awk", `/cache:/{print$3}`)
-  fout, err := free.StdoutPipe()
+  f, err := os.Open("/proc/meminfo")
   if err != nil {
     return fmt.Sprint(err)
   }
-  free.Start()
-  grep.Stdin = fout
-  gout, err := grep.Output()
-  if err != nil {
-    return fmt.Sprint(err)
+  defer f.Close()
+
+  bufReader := bufio.NewReader(f)
+  b := make([]byte, 100)
+  var free, total string
+  for line, isPrefix, err := bufReader.ReadLine(); err != io.EOF; line, isPrefix, err = bufReader.ReadLine() {
+    b = append(b, line...)
+
+    if !isPrefix {
+      switch {
+      case bytes.Contains(b, []byte("MemFree")): 
+        s := bytes.Fields(b)
+        free = string(s[1])
+      case bytes.Contains(b, []byte("MemTotal")):
+        s := bytes.Fields(b)
+        total = string(s[1])
+      }
+      b = b[:0]
+    }
   }
-  return fmt.Sprintf("%sMB", gout)
+  return fmt.Sprintf("%s/%s", free, total)
 }
 
 func now() string {
