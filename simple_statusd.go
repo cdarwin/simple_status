@@ -4,13 +4,17 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"time"
 )
+
+var port = flag.String("p", ":8080", "http service address")
 
 type Message struct {
 	Host string
@@ -81,6 +85,10 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	flag.Parse()
 	http.HandleFunc("/", handler)
-	http.ListenAndServe(":8080", nil)
+	err := http.ListenAndServe(*port, nil)
+	if err != nil {
+		log.Fatal("ListenAndServe:", err)
+	}
 }
