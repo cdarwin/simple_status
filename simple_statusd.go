@@ -27,6 +27,11 @@ type Message struct {
 	Time string
 }
 
+func init() {
+	flag.BoolVar(&tls, "ssl", false, "TLS boolean flag")
+	flag.Parse()
+}
+
 func host() string {
 	host, err := os.Hostname()
 	if err != nil {
