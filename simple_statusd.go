@@ -14,7 +14,11 @@ import (
 	"time"
 )
 
-var port = flag.String("p", ":8080", "http service address")
+var (
+	port  = flag.String("p", ":8080", "http service address")
+	token = flag.String("t", "", "http auth token")
+	tls   bool
+)
 
 type Message struct {
 	Host string
