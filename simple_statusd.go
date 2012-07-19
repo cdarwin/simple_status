@@ -94,10 +94,21 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	flag.Parse()
-	http.HandleFunc("/", handler)
-	err := http.ListenAndServe(*port, nil)
-	if err != nil {
-		log.Fatal("ListenAndServe:", err)
+	url := "/"
+	if *token != "" {
+		url += *token
+	}
+	http.HandleFunc(url, handler)
+	switch tls {
+	case false:
+		err := http.ListenAndServe(*port, nil)
+		if err != nil {
+			log.Fatal("ListenAndServe:", err)
+		}
+	case true:
+		err := http.ListenAndServeTLS(*port, "cert.pem", "key.pem", nil)
+		if err != nil {
+			log.Fatal("ListenAndServeTLS:", err)
+		}
 	}
 }
