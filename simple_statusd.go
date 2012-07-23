@@ -14,22 +14,11 @@ import (
 	"time"
 )
 
-var (
-	port  = flag.String("p", ":8080", "http service address")
-	token = flag.String("t", "", "http auth token")
-	tls   bool
-)
-
 type Message struct {
 	Host string
 	Load string
 	Rams string
 	Time string
-}
-
-func init() {
-	flag.BoolVar(&tls, "ssl", false, "TLS boolean flag")
-	flag.Parse()
 }
 
 func host() string {
@@ -45,7 +34,7 @@ func load() string {
 	if err != nil {
 		return fmt.Sprint(err)
 	}
-	return fmt.Sprintf("%s", b[:len(b)-1])
+	return string(b[:len(b)-1])
 }
 
 func ram() string {
@@ -56,9 +45,12 @@ func ram() string {
 	defer f.Close()
 
 	bufReader := bufio.NewReader(f)
-	b := make([]byte, 100)
+	b := make([]byte, 0, 100)
 	var free, total string
 	for line, isPrefix, err := bufReader.ReadLine(); err != io.EOF; line, isPrefix, err = bufReader.ReadLine() {
+		if err != nil {
+			return fmt.Sprint(err)
+		}
 		b = append(b, line...)
 
 		if !isPrefix {
@@ -90,16 +82,21 @@ func message() []byte {
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "%s", message())
+	w.Write(message())
 }
 
 func main() {
+	port  := flag.String("p", ":8080", "http service address")
+	token := flag.String("t", "", "http auth token")
+	tls := flag.Bool("ssl", false, "TLS boolean flag")
+	flag.Parse()
+
 	url := "/"
 	if *token != "" {
 		url += *token
 	}
 	http.HandleFunc(url, handler)
-	switch tls {
+	switch *tls {
 	case false:
 		err := http.ListenAndServe(*port, nil)
 		if err != nil {
