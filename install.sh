@@ -10,10 +10,11 @@
 
 ##
 # Set up build directory
+BLDIR=build
 chdir $HOME
-mkdir ssd
-git clone https://github.com/cdarwin/simple_status.git ssd
-cd ssd
+mkdir $BLDIR
+git clone https://github.com/cdarwin/simple_status.git $BLDIR
+chdir $BLDIR
 export DIR=$(pwd)
 
 ## 
@@ -32,7 +33,7 @@ fi
 
 ##
 # Build package, generate certs, and modify permissions
-go build simple_statusd.go
+go build simple_status
 #go build $CRT
 go build /usr/lib/go/src/pkg/crypto/tls/generate_cert.go
 ./generate_cert
@@ -43,6 +44,6 @@ sudo chmod g+r key.pem
 # This is just one way to deal changing the default configuration of the package
 # we're using upstart here and setting some runtime flags
 sed -i -e 's,TLS=,&"-ssl",' -e 's,PORT=,&"-p :9090",' -e 's,TOKEN=,&"-t foobarbaz",' \
-  -e "s,\(DIR=\).*,\1\"$DIR\"," simple_statusd.conf
-sudo cp simple_statusd.conf /etc/init/simple_statusd.conf
-sudo start simple_statusd
+  -e "s,\(DIR=\).*,\1\"$DIR\"," simple_status
+sudo cp simple_status.conf /etc/init/simple_status.conf
+sudo start simple_status
