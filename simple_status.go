@@ -25,6 +25,7 @@ func main() {
 	http.HandleFunc(base+"/system", systemHandler)
 	http.HandleFunc(base+"/system/ram", ramHandler)
 	http.HandleFunc(base+"/system/load", loadHandler)
+	http.HandleFunc(base+"/system/host", hostHandler)
 	http.HandleFunc(base+"/shell", shellHandler)
 
 	switch *tls {
