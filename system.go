@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"net/http"
 )
 
 type System struct {
@@ -10,10 +9,6 @@ type System struct {
 	Load Load   `json:"load"`
 	Ram  Ram    `json:"ram"`
 	Time string `json:"time"`
-}
-
-func systemHandler(w http.ResponseWriter, r *http.Request) {
-	w.Write(auth(system(), r.FormValue("token")))
 }
 
 func system() []byte {

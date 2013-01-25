@@ -3,26 +3,14 @@ package main
 import (
 	"bufio"
 	"bytes"
-	"encoding/json"
 	"io"
 	"log"
-	"net/http"
 	"os"
 )
 
 type Ram struct {
 	Free  string `json:"free"`
 	Total string `json:"total"`
-}
-
-func ramHandler(w http.ResponseWriter, r *http.Request) {
-	R := ram()
-	m := Ram{R.Free, R.Total}
-	b, err := json.MarshalIndent(m, "", "  ")
-	if err != nil {
-		log.Fatal(err)
-	}
-	w.Write(auth(b, r.FormValue("token")))
 }
 
 func ram() Ram {
