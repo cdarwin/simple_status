@@ -3,6 +3,10 @@ SimpleStatus
 
 This repo contains a very simple tool written in [the Go Programming Language](http://golang.org/). It is intended to be a RESTful interface for obtaining certain system statistics from a server. It returns results in [JSON](http://www.json.org/) format.
 
+[![Build Status][1][2]
+[1]: https://travis-ci.org/cdarwin/simple_status.png
+[2]: https://travis-ci.org/cdarwin/simple_status
+
 ## Configuration
 
 `simple_status` accepts a few command line arguments to configure how it is accessed. Running `simple_status --help` will show you the following:
