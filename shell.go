@@ -12,11 +12,16 @@ type Shell struct {
 }
 
 func shellHandler(w http.ResponseWriter, r *http.Request) {
-	if err := r.ParseForm(); err != nil {
-		log.Println(err)
+	var m interface{}
+	if *token != "" {
+		if err := r.ParseForm(); err != nil {
+			log.Println(err)
+		}
+		S := shell(r.FormValue("exec"))
+		m = Shell{S.Output}
+	} else {
+		m = "You must set an auth token to use the shell endpoint"
 	}
-	S := shell(r.FormValue("exec"))
-	m := Shell{S.Output}
 	b, err := json.Marshal(m)
 	if err != nil {
 		log.Println(err)
