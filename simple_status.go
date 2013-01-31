@@ -27,6 +27,7 @@ func main() {
 	http.HandleFunc(base+"/system/load", loadHandler)
 	http.HandleFunc(base+"/system/host", hostHandler)
 	http.HandleFunc(base+"/shell", shellHandler)
+	http.HandleFunc(base+"/disk", diskHandler)
 
 	switch *tls {
 	case false:
