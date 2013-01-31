@@ -82,4 +82,4 @@ A new `shell` endpoint allows you to execute arbitrary commands on the node this
 
 A new `disk` endpoint returns some info about the disk usage on the host. The path "/" is assumed if no device or path is provided to the disk parameter.
 
-    curl -k -d "disk=/mnt/point" -d "token=foobarbaz" https://myhostname.com:9090/1/api/shell
+    curl -k -d "disk=/mnt/point" -d "token=foobarbaz" https://myhostname.com:9090/1/api/disk
