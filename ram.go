@@ -13,10 +13,10 @@ type Ram struct {
 	Total string `json:"total"`
 }
 
-func ram() Ram {
+func ram() interface{} {
 	f, err := os.Open("/proc/meminfo")
 	if err != nil {
-		log.Fatal("os.Open: ", err)
+		return "Unsupported"
 	}
 	defer f.Close()
 
