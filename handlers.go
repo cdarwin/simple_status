@@ -34,34 +34,22 @@ func doMarshall(m interface{}) []byte {
 	return b
 }
 
-func hostHandler(w http.ResponseWriter, r *http.Request) {
-	b, err := json.MarshalIndent(host(), "", "  ")
-	if err != nil {
-		log.Fatal(err)
-	}
-	w.Write(auth(b, r.FormValue("token")))
+func diskHandler(w http.ResponseWriter, r *http.Request, s string) {
+	w.Write(doMarshall(disk(s)))
 }
 
-func loadHandler(w http.ResponseWriter, r *http.Request) {
-	L := load()
-	m := Load{L.Avg1, L.Avg2, L.Avg3}
-	b, err := json.MarshalIndent(m, "", "  ")
-	if err != nil {
-		log.Fatal(err)
-	}
-	w.Write(auth(b, r.FormValue("token")))
+func hostHandler(w http.ResponseWriter, r *http.Request, s string) {
+	w.Write(doMarshall(host()))
 }
 
-func ramHandler(w http.ResponseWriter, r *http.Request) {
-	R := ram()
-	m := Ram{R.Free, R.Total}
-	b, err := json.MarshalIndent(m, "", "  ")
-	if err != nil {
-		log.Fatal(err)
-	}
-	w.Write(auth(b, r.FormValue("token")))
+func loadHandler(w http.ResponseWriter, r *http.Request, s string) {
+	w.Write(doMarshall(load()))
 }
 
-func systemHandler(w http.ResponseWriter, r *http.Request) {
-	w.Write(auth(system(), r.FormValue("token")))
+func ramHandler(w http.ResponseWriter, r *http.Request, s string) {
+	w.Write(doMarshall(ram()))
+}
+
+func systemHandler(w http.ResponseWriter, r *http.Request, s string) {
+	w.Write(system(s))
 }
