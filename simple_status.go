@@ -22,12 +22,12 @@ func main() {
 	flag.Parse()
 
 	base := "/1/api"
-	http.HandleFunc(base+"/system", systemHandler)
-	http.HandleFunc(base+"/system/ram", ramHandler)
-	http.HandleFunc(base+"/system/load", loadHandler)
-	http.HandleFunc(base+"/system/host", hostHandler)
+	http.HandleFunc(base+"/system", makeHandler(systemHandler))
+	http.HandleFunc(base+"/system/ram", makeHandler(ramHandler))
+	http.HandleFunc(base+"/system/load", makeHandler(loadHandler))
+	http.HandleFunc(base+"/system/host", makeHandler(hostHandler))
+	http.HandleFunc(base+"/system/disk", makeHandler(diskHandler))
 	http.HandleFunc(base+"/shell", shellHandler)
-	http.HandleFunc(base+"/disk", diskHandler)
 
 	switch *tls {
 	case false:
