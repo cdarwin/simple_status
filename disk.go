@@ -4,13 +4,13 @@ import (
 	"syscall"
 )
 
-type DiskStatus struct {
+type Disk struct {
 	All  uint64 `json:"all"`
 	Used uint64 `json:"used"`
 	Free uint64 `json:"free"`
 }
 
-func DiskUsage(path string) (disk DiskStatus) {
+func disk(path string) (disk Disk) {
 	fs := syscall.Statfs_t{}
 	err := syscall.Statfs(path, &fs)
 	if err != nil {
