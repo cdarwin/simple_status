@@ -5,14 +5,15 @@ import (
 )
 
 type System struct {
-	Host string `json:"host"`
-	Load Load   `json:"load"`
-	Ram  Ram    `json:"ram"`
-	Time string `json:"time"`
+	Host string      `json:"host"`
+	Disk interface{} `json:"disk"`
+	Load interface{} `json:"load"`
+	Ram  interface{} `json:"ram"`
+	Time string      `json:"time"`
 }
 
-func system() []byte {
-	m := System{host(), load(), ram(), now()}
+func system(s string) []byte {
+	m := System{host(), disk(s), load(), ram(), now()}
 	b, err := json.MarshalIndent(m, "", "  ")
 	if err != nil {
 		return nil
