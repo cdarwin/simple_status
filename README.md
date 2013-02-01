@@ -1,85 +1,197 @@
 SimpleStatus
 ============
 
-This repo contains a very simple tool written in [the Go Programming Language](http://golang.org/). It is intended to be a RESTful interface for obtaining certain system statistics from a server. It returns results in [JSON](http://www.json.org/) format.
+SimpleStatus provides a REST/HTTP API for obtaining certain system statistics from a node. SimpleStatus is written in [the Go Programming Language](http://golang.org/).
 
 [![Build Status][1]][2]
 [1]: https://travis-ci.org/cdarwin/simple_status.png
 [2]: https://travis-ci.org/cdarwin/simple_status
 
-## Configuration
+## Endpoints
 
-`simple_status` accepts a few command line arguments to configure how it is accessed. Running `simple_status --help` will show you the following:
+<table>
+  <tr>
+    <th>URI</th>
+    <th>HTTP Verb</th>
+    <th>Purpose</th>
+  </tr>
+  <tr>
+    <td>/system</td>
+    <td>GET</td>
+    <td>List all available resources</td>
+  </tr>
+  <tr>
+    <td>/system/host</td>
+    <td>GET</td>
+    <td>List node hostname</td>
+  </tr>
+  </tr>
+  <tr>
+    <td>/system/disk</td>
+    <td>GET</td>
+    <td>List node disk usage</td>
+  </tr>
+  <tr>
+    <td>/system/load</td>
+    <td>GET</td>
+    <td>List node load averages</td>
+  </tr>
+  <tr>
+    <td>/system/ram</td>
+    <td>GET</td>
+    <td>List node RAM usage</td>
+  </tr>
+  <tr>
+    <td>/shell</td>
+    <td>GET</td>
+    <td>Execute arbitrary shell commands on the node</td>
+  </tr>
+</table>
 
-    Usage of ./simple_status:
-    -p=":8080": http service address
-    -ssl=false: TLS boolean flag
-    -t="": http auth token
+## Authentication
 
-### Port
+SimpleStatus currently uses a very simple method for authenticating API requests. The daemon may be configured to require authentication at runtime using the `-t` switch. This token may be any arbitrary string at the time of this writing.
 
-You may set the port to run the service on. This option is a string and is required to prepend with the ":" (colon) character. 
+**Example Query with Parameter**:
 
-The default port is 8080 if left unset.
+`GET https://nodename.com:8080/1/api/system?token=abc4c7c627376858`
 
-    -p=":8080": http service address
+## Requests
 
-### Encryption
+Requests to the API are simple HTTP requests against the API endpoints.
 
-You may choose to wrap your connection in SSL for added security. This option is a boolean value of either `true` or `false`. 
+All request bodies should be in JSON, with Content-Type of `application/json`.
 
-This option is left off by defaults for simplicity.
+### Base URL
 
-    -ssl=false: TLS boolean flag
+A few parameters may be set at runtime which will affect the bare URL that you will use as the prefix for the desired endpoint.
 
-### Authentication
+* `-ssl`: Enforce encryption of communication with the API
+* `-p`: Specify the port for communication with the API (defaults to 8080)
 
-You may choose to set an authentication token for added security. This option is any string.
+All endpoints should be prefixed with something similar to the following:
 
-This option is left off by default.
+`{scheme}://{nodename}:{port}/1/api`
 
-    -t="": http auth token
+## Responses
 
-## Upstart
+All responses are in JSON, with Content-Type of `application/json`. A response is structured as follows:
 
-We are using [upstart](http://upstart.ubuntu.com/) to manage running it in the background and have included a [sample](https://github.com/cdarwin/simple_status/blob/master/simple_status.conf) [job configuration file](http://upstart.ubuntu.com/cookbook/#job-configuration-file) to help facilitate this.
+`{ "resource_name": "resource value" }`
 
-## Installation
+---
 
-We have included a very simple bootstrap [script](https://github.com/cdarwin/simple_status/blob/master/install.sh). You should take a careful look at it and modify it for your own environment before blindly deploying it. This is just a starting template to help deploy `simple_status` to all of your servers.
+## System
 
-## Usage
+Overview of all available resources
 
-You've got a server that you want to know some system stats about. You'll want to run the process in the background with something like the upstart script mentioned above. A typical `exec` line might look something like this:
+**Endpoint** 
 
-    simple_status -ssl -p :9090 -t foobarbaz
+`GET /system`
 
-Once you've got the status daemon running on the machines you'd like to monitor, next you'll want to request some useful information about them. Issuing a `GET` request to your host might look something like this:
+**Optional URI Parameters**
 
-    https://myhostname.com:9090/1/api/system?token=foobarbz
+* `disk`: Specify a path or device for disk usage
+    *  If none is specified, "/" is assumed
 
-This should return a json blob of something to the effect of:
+**Response**
 
     {
-      "host": "myhostname",
+      "host": "nexus2",
+      "disk": {
+        "all": 35439468544,
+        "used": 13761273856,
+        "free": 21678194688
+      },
       "load": {
-        "avg1": "0.56",
-        "avg2": "0.51",
-        "avg3": "0.53"
+        "avg1": "0.22",
+        "avg2": "0.26",
+        "avg3": "0.26"
       },
       "ram": {
-        "free": "4937256",
-        "total": "8062936"
+        "free": "576668",
+        "total": "2060976"
       },
-      "time": "2012 08/01 0055-43"
+      "time": "2013 02/01 0254-32"
     }
 
-To get just the load averages, you would use `https://myhostname.com:9090/1/api/system/load?token=foobarbz`
+## Host
 
-A new `shell` endpoint allows you to execute arbitrary commands on the node this daemon is running on.
+System hostname
 
-    curl -k -d "exec=whoami" -d "token=foobarbaz" https://myhostname.com:9090/1/api/shell
+**Endpoint** 
 
-A new `disk` endpoint returns some info about the disk usage on the host. The path "/" is assumed if no device or path is provided to the disk parameter.
+`GET /system/host`
 
-    curl -k -d "disk=/mnt/point" -d "token=foobarbaz" https://myhostname.com:9090/1/api/disk
+**Response**
+
+    "nexus2"
+
+## Disk
+
+Used, free, and total disk space available for a given device or path. If no `disk` parameter is provided, the endpoint assumes the `/` path.
+
+**Endpoint** 
+
+`GET /system/disk`
+
+**Optional URI Parameters**
+
+* `disk`: Specify a path or device for disk usage
+    *  If none is specified, "/" is assumed
+
+**Response**
+
+    {
+      "all": 35439468544,
+      "used": 20696563712,
+      "free": 14742904832
+    }
+
+## Load
+
+Load averages for the node
+
+**Endpoint** 
+
+`GET /system/load`
+
+Response:
+
+    {
+      "avg1": "0.40",
+      "avg2": "0.40",
+      "avg3": "0.37"
+    }
+
+## RAM
+
+RAM usage for the node
+
+**Endpoint** 
+
+`GET /system/ram`
+
+Response:
+
+    {
+      "free": "20608",
+      "total": "2060976"
+    }
+
+## Shell
+
+Execute arbitrary shell commands on the node. This endpoint is only accessible if a token was specified at runtime
+
+**Endpoint** 
+
+`GET /shell`
+
+**URI Parameters**
+
+* `exec`: Specify the command to be executed on the node
+* `token`: Mandatory authentication token
+
+**Response**
+
+    "command response"
