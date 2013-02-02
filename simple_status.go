@@ -4,15 +4,25 @@ import (
 	"flag"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 var token *string
 
-func auth(m []byte, t string) []byte {
-	if t != *token {
-		return []byte("Unauthorized")
+func toInt(b []byte) (i int) {
+	i, err := strconv.Atoi(string(b))
+	if err != nil {
+		log.Println("Failed to convert string to int")
 	}
-	return m
+	return
+}
+
+func toFloat(b []byte) (f float64) {
+	f, err := strconv.ParseFloat(string(b), 64)
+	if err != nil {
+		log.Println("Failed to convert string to float")
+	}
+	return
 }
 
 func main() {
@@ -28,7 +38,7 @@ func main() {
 	http.HandleFunc(base+"/system/host", makeHandler(hostHandler))
 	http.HandleFunc(base+"/system/disk", makeHandler(diskHandler))
 	http.HandleFunc(base+"/system/cpuinfo", makeHandler(cpuHandler))
-	http.HandleFunc(base+"/shell", shellHandler)
+	http.HandleFunc(base+"/shell", makeHandler(shellHandler))
 
 	switch *tls {
 	case false:

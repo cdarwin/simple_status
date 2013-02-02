@@ -9,8 +9,8 @@ import (
 )
 
 type Ram struct {
-	Free  string `json:"free"`
-	Total string `json:"total"`
+	Free  int `json:"free"`
+	Total int `json:"total"`
 }
 
 func ram() interface{} {
@@ -22,7 +22,8 @@ func ram() interface{} {
 
 	bufReader := bufio.NewReader(f)
 	b := make([]byte, 0, 100)
-	var r Ram
+	var free, total int
+
 	for line, isPrefix, err := bufReader.ReadLine(); err != io.EOF; line, isPrefix, err = bufReader.ReadLine() {
 		if err != nil {
 			log.Fatal("bufReader.ReadLine: ", err)
@@ -32,14 +33,12 @@ func ram() interface{} {
 		if !isPrefix {
 			switch {
 			case bytes.Contains(b, []byte("MemFree")):
-				s := bytes.Fields(b)
-				r.Free = string(s[1])
+				free = toInt(bytes.Fields(b)[1])
 			case bytes.Contains(b, []byte("MemTotal")):
-				s := bytes.Fields(b)
-				r.Total = string(s[1])
+				total = toInt(bytes.Fields(b)[1])
 			}
 			b = b[:0]
 		}
 	}
-	return r
+	return Ram{free, total}
 }
