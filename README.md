@@ -109,13 +109,13 @@ Overview of all available resources
         "cores": 2
       },
       "load": {
-        "avg1": "0.26",
-        "avg2": "0.23",
-        "avg3": "0.23"
+        "avg1": 0.26,
+        "avg2": 0.23,
+        "avg3": 0.23
       },
       "ram": {
-        "free": "565848",
-        "total": "7871876"
+        "free": 565848,
+        "total": 7871876
       },
       "time": "2013 02/01 2323-54"
     }
@@ -180,9 +180,9 @@ Load averages for the node
 Response:
 
     {
-      "avg1": "0.40",
-      "avg2": "0.40",
-      "avg3": "0.37"
+      "avg1": 0.40,
+      "avg2": 0.40,
+      "avg3": 0.37
     }
 
 ## RAM
@@ -196,8 +196,8 @@ RAM usage for the node
 Response:
 
     {
-      "free": "20608",
-      "total": "2060976"
+      "free": 20608,
+      "total": 2060976
     }
 
 ## Shell
