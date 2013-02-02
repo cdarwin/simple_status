@@ -27,6 +27,7 @@ func main() {
 	http.HandleFunc(base+"/system/load", makeHandler(loadHandler))
 	http.HandleFunc(base+"/system/host", makeHandler(hostHandler))
 	http.HandleFunc(base+"/system/disk", makeHandler(diskHandler))
+	http.HandleFunc(base+"/system/cpuinfo", makeHandler(cpuHandler))
 	http.HandleFunc(base+"/shell", shellHandler)
 
 	switch *tls {
