@@ -57,3 +57,17 @@ func cpuHandler(w http.ResponseWriter, r *http.Request, s string) {
 func systemHandler(w http.ResponseWriter, r *http.Request, s string) {
 	w.Write(system(s))
 }
+
+func shellHandler(w http.ResponseWriter, r *http.Request, s string) {
+	var m interface{}
+	if *token != "" {
+		if err := r.ParseForm(); err != nil {
+			log.Println(err)
+		}
+		S := shell(r.FormValue("exec"))
+		m = Shell{S.Output}
+	} else {
+		m = "You must set an auth token to use the shell endpoint"
+	}
+	w.Write(doMarshall(m))
+}
