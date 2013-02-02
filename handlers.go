@@ -50,6 +50,10 @@ func ramHandler(w http.ResponseWriter, r *http.Request, s string) {
 	w.Write(doMarshall(ram()))
 }
 
+func cpuHandler(w http.ResponseWriter, r *http.Request, s string) {
+	w.Write(doMarshall(cpuinfo()))
+}
+
 func systemHandler(w http.ResponseWriter, r *http.Request, s string) {
 	w.Write(system(s))
 }
