@@ -6,7 +6,6 @@ import (
 	"io"
 	"log"
 	"os"
-	"strconv"
 )
 
 type CpuInfo struct {
@@ -35,11 +34,11 @@ func cpuinfo() interface{} {
 		if !isPrefix {
 			switch {
 			case bytes.Contains(b, []byte("processor")):
-				procs, _ = strconv.Atoi(string(bytes.Fields(b)[2]))
+				procs = toInt(bytes.Fields(b)[2])
 			case bytes.Contains(b, []byte("siblings")):
-				sibs, _ = strconv.Atoi(string(bytes.Fields(b)[2]))
+				sibs = toInt(bytes.Fields(b)[2])
 			case bytes.Contains(b, []byte("cores")):
-				cores, _ = strconv.Atoi(string(bytes.Fields(b)[3]))
+				cores = toInt(bytes.Fields(b)[3])
 			}
 			b = b[:0]
 		}

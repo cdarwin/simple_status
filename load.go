@@ -5,9 +5,9 @@ import (
 )
 
 type Load struct {
-	Avg1 string `json:"avg1"`
-	Avg2 string `json:"avg2"`
-	Avg3 string `json:"avg3"`
+	Avg1 float64 `json:"avg1"`
+	Avg2 float64 `json:"avg2"`
+	Avg3 float64 `json:"avg3"`
 }
 
 func load() interface{} {
@@ -15,5 +15,5 @@ func load() interface{} {
 	if err != nil {
 		return "Unsupported"
 	}
-	return Load{string(b[0:4]), string(b[5:9]), string(b[10:14])}
+	return Load{toFloat(b[0:4]), toFloat(b[5:9]), toFloat(b[10:14])}
 }
