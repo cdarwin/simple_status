@@ -97,22 +97,27 @@ Overview of all available resources
 **Response**
 
     {
-      "host": "nexus2",
+      "host": "mario",
       "disk": {
-        "all": 35439468544,
-        "used": 13761273856,
-        "free": 21678194688
+        "all": 117623562240,
+        "used": 8339341312,
+        "free": 109284220928
+      },
+      "cpuinfo": {
+        "processors": 4,
+        "siblings": 4,
+        "cores": 2
       },
       "load": {
-        "avg1": "0.22",
-        "avg2": "0.26",
-        "avg3": "0.26"
+        "avg1": "0.26",
+        "avg2": "0.23",
+        "avg3": "0.23"
       },
       "ram": {
-        "free": "576668",
-        "total": "2060976"
+        "free": "565848",
+        "total": "7871876"
       },
-      "time": "2013 02/01 0254-32"
+      "time": "2013 02/01 2323-54"
     }
 
 ## Host
@@ -146,6 +151,22 @@ Used, free, and total disk space available for a given device or path. If no `di
       "all": 35439468544,
       "used": 20696563712,
       "free": 14742904832
+    }
+
+## CpuInfo
+
+From `/etc/cpuinfo`
+
+**Endpoint** 
+
+`GET /system/cpuinfo`
+
+Response:
+
+    {
+      "processors": 4,
+      "siblings": 4,
+      "cores": 2
     }
 
 ## Load
