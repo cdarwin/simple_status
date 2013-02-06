@@ -43,5 +43,12 @@ func cpuinfo() interface{} {
 			b = b[:0]
 		}
 	}
+	/*
+	  Single processor, single core machines don't report cores at all
+	  We assume there is one core in this case
+	*/
+	if cores == 0 {
+		cores += 1
+	}
 	return CpuInfo{procs + 1, sibs, cores}
 }
